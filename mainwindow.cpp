@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
     tips->setText("使用W, A, S, D或者方向键进行控制！");
     ui->statusbar->addWidget(tips);
 
+    connect(ui->btn_undo, &QPushButton::clicked, this, &MainWindow::onUndoBtn);
+
     start();
 }
 
@@ -75,10 +77,7 @@ void MainWindow::printMap()
 
 void MainWindow::start()
 {
-    memset(g.map, 0, sizeof(int[4][4]));
-    g.score = 0;
-    g.randNum();
-    g.randNum();
+    g.start();
     printMap();
 }
 
@@ -100,6 +99,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         g.randNum();
         g.isJustMove = false;
+        g.recordMap();
         printMap();
     }
     if(g.isOver())
@@ -114,3 +114,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::onUndoBtn()
+{
+    g.undo();
+    printMap();
+}

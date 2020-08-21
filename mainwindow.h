@@ -4,6 +4,10 @@
 #include <QMainWindow>
 #include <QKeyEvent>
 #include <QMessageBox>
+#include <QStack>
+
+#include <QDebug>
+
 #include "game.h"
 
 QT_BEGIN_NAMESPACE
@@ -25,8 +29,11 @@ public:
 
     void keyPressEvent(QKeyEvent * event);
 
+    void onUndoBtn();
+
 private:
     Ui::MainWindow *ui;
+    QStack<int *> mapRecorder;
     Game g;
 
 };

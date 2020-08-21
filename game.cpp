@@ -6,33 +6,10 @@ Game::~Game() { }
 void Game::start()
 {
     memset(map, 0, sizeof(int[4][4]));
+    score = 0;
     randNum();
     randNum();
-    while (true)
-    {
-        printMap();
-        waitForControl();
-        if (isOver()) return;
-        if(isJustMove) randNum();
-        isJustMove = false;
-    }
-
-    while(true)
-    {
-        std::cout << "Game Over. Your score is " << score << "." << std::endl;
-        std::cout << "Would you like to restart? (y/n)" << std::endl;
-        int key = _getch();
-        if(key == 'N' ||key == 'n')
-        {
-            system("pause");
-            break;
-        }
-        else if(key == 'Y' || key == 'y')
-        {
-            start();
-            break;
-        }
-    }
+    recordMap();
 }
 
 void Game::randNum() //在地图上随机一个空位置生成 2 或 4
@@ -44,23 +21,6 @@ void Game::randNum() //在地图上随机一个空位置生成 2 或 4
     } while (this->map[point[0]][point[1]] != 0);
     this->map[point[0]][point[1]] = rand() % 2 ? 2 : 4;
 }
-
-void Game::printMap()
-{
-    system("cls");
-    for (int row = 0; row < 4; row++)
-    {
-        printf("|");
-        for (int col = 0; col < 4; col++)
-            if (this->map[row][col] != 0)
-                printf("%5d|", this->map[row][col]);
-            else
-                printf("%5c|", ' ');
-        printf("\n-------------------------\n");
-    }
-    std::cout << "SCORE = " << this->score << std::endl;
-}
-
 
 bool Game::isOver()
 {
@@ -85,7 +45,8 @@ void Game::compact(int line[]) //向左压缩
             if (count != i)
             {
                 line[count] = line[i];
-                isJustMove = true;
+
+                this->isJustMove = true;
             }
             count++;
         }
@@ -101,7 +62,8 @@ void Game::merge(int line[]) //合并相同项
             line[i + 1] = 0;
 
             score += line[i];
-            isJustMove = true;
+
+            this->isJustMove = true;
         }
 }
 
@@ -153,23 +115,20 @@ void Game::onRightKey()
     rotateMap(2);
 }
 
-void Game::waitForControl()
+void Game::recordMap()
 {
-    while (true)
-    {
-        int key = _getch();
-        if (key == 'W' || key == 'w' || key == 'S' || key == 's' || key == 'A' || key == 'a' || key == 'D' || key == 'd')
-        {
-            switch (toupper(key))
-            {
-            case 'W': onUpKey(); break;
-            case 'S': onDownKey(); break;
-            case 'A': onLeftKey(); break;
-            case 'D': onRightKey(); break;
-            }
-            break;
-        }
-    }
+    GameHistory tmp;
+    tmp.score = this->score;
+    memcpy(tmp.map, this->map, sizeof(int[4][4]));
+    history.push(tmp);
 }
 
+void Game::undo()
+{
+    GameHistory tmp = history.top();
+    memcpy(this->map, tmp.map, sizeof(int[4][4]));
+    this->score = tmp.score;
+    if(history.size() != 1)
+        history.pop();
+}
 

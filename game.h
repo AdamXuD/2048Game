@@ -4,15 +4,22 @@
 #include <iostream>
 #include <ctime>
 #include <cstring>
-
-#include <conio.h>
+#include <stack>
 
 class Game
 {
     friend class MainWindow;
+
+    struct GameHistory
+    {
+        int map[4][4];
+        int score;
+    };
+
     bool isJustMove = false;
     int map[4][4];
     int score = 0;
+    std::stack<GameHistory> history;
 
 public:
     Game(); //清空脏内存
@@ -22,7 +29,6 @@ public:
 
 private:
     void randNum(); //在地图上随机一个空位置生成 2 或 4
-    void printMap();
     bool isOver();
 
     void compact(int line[]); //向左压缩
@@ -35,7 +41,10 @@ private:
     void onLeftKey();
     void onRightKey();
 
-    void waitForControl();
+    void undo();
+    void recordMap();
+
+    void beforeChangeMap();
 
 };
 
