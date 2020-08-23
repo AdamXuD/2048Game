@@ -1,14 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QKeyEvent>
-#include <QMessageBox>
-#include <QStack>
-
-#include <QDebug>
-
 #include "game.h"
+#include "common.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

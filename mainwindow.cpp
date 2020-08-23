@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tableWidget_map->setSelectionMode(QAbstractItemView::NoSelection);
     ui->tableWidget_map->setFocusPolicy(Qt::NoFocus);
+    ui->tableWidget_map->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     QFont font;
     font.setPointSize(18);
@@ -56,21 +57,21 @@ QColor MainWindow::getItemColor(int num)
     case 65536: return QColor(3, 35, 14);
     default: return QColor(255, 255, 255);
     }
-    return QColor(199, 237, 253);
+    return QColor(255, 255, 255);
 }
 
 void MainWindow::printMap()
 {
     ui->tableWidget_map->clearContents();
-    ui->label_score->setText(QString("%1").arg(g.score));
+    ui->label_score->setText(QString("%1").arg(g.data.score));
     for(int row = 0; row < 4; row++)
         for(int col = 0; col < 4; col++)
-            if(g.map[row][col] != 0)
+            if(g.data.map[row][col] != 0)
             {
-                QTableWidgetItem *i = new QTableWidgetItem(QString("%1").arg(g.map[row][col]));
+                QTableWidgetItem *i = new QTableWidgetItem(QString("%1").arg(g.data.map[row][col]));
                 i->setTextAlignment(Qt::AlignCenter);
                 ui->tableWidget_map->setItem(row, col, i);
-                ui->tableWidget_map->item(row, col)->setBackgroundColor(getItemColor(g.map[row][col]));
+                ui->tableWidget_map->item(row, col)->setBackgroundColor(getItemColor(g.data.map[row][col]));
             }
 
 }
@@ -99,12 +100,13 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         g.randNum();
         g.isJustMove = false;
+        g.data.step++;
         g.recordMap();
         printMap();
     }
     if(g.isOver())
     {
-        if(QMessageBox::Yes == QMessageBox::information(this, "Game Over", QString("Game Over. Your score is %1!\nWould you want to restart? ").arg(g.score), QMessageBox::Yes | QMessageBox::No))
+        if(QMessageBox::Yes == QMessageBox::information(this, "Game Over", QString("Game Over. Your score is %1 !\nWould you want to restart? ").arg(g.data.score), QMessageBox::Yes | QMessageBox::No))
             start();
     }
 }

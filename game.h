@@ -1,25 +1,24 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <iostream>
-#include <ctime>
-#include <cstring>
-#include <stack>
+#include "common.h"
 
 class Game
 {
     friend class MainWindow;
 
-    struct GameHistory
+    bool isJustMove = false;
+    struct GameData
     {
         int map[4][4];
         int score;
+        unsigned int step = 0;
+
+        GameData() { memset(this, 0, sizeof(GameData)); }
     };
 
-    bool isJustMove = false;
-    int map[4][4];
-    int score = 0;
-    std::stack<GameHistory> history;
+    GameData data;
+    std::stack<GameData> history;
 
 public:
     Game(); //清空脏内存
@@ -43,8 +42,6 @@ private:
 
     void undo();
     void recordMap();
-
-    void beforeChangeMap();
 
 };
 

@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network
 
 QMAKE_LFLAGS += -static
 
@@ -23,6 +23,7 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
+    common.h \
     game.h \
     mainwindow.h
 
