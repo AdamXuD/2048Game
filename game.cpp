@@ -5,6 +5,7 @@ Game::~Game() { }
 
 void Game::start()
 {
+    memset(&data, 0, sizeof(GameData));
     randNum();
     randNum();
     recordMap();

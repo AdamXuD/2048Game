@@ -18,17 +18,25 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    achimentdialog.cpp \
     game.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    myinputdialog.cpp \
+    network.cpp
 
 HEADERS += \
+    achimentdialog.h \
     common.h \
     game.h \
-    mainwindow.h
+    mainwindow.h \
+    myinputdialog.h \
+    network.h
 
 FORMS += \
-    mainwindow.ui
+    achimentdialog.ui \
+    mainwindow.ui \
+    myinputdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

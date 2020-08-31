@@ -9,6 +9,14 @@ MainWindow::MainWindow(QWidget *parent)
     setFixedSize(size());
     setWindowTitle("2048");
 
+    windowInit();
+    actionInit();
+
+    start();
+}
+
+void MainWindow::windowInit()
+{
     ui->tableWidget_map->setRowCount(4);
     ui->tableWidget_map->setColumnCount(4);
 
@@ -30,9 +38,96 @@ MainWindow::MainWindow(QWidget *parent)
     tips->setText("使用W, A, S, D或者方向键进行控制！");
     ui->statusbar->addWidget(tips);
 
-    connect(ui->btn_undo, &QPushButton::clicked, this, &MainWindow::onUndoBtn);
+    ui->btn_undo->setFocusPolicy(Qt::NoFocus);
+}
 
-    start();
+void MainWindow::actionInit()
+{
+    /*对战时子窗口函数*/
+//    QDockWidget * doc = new QDockWidget("工具",this);
+//    doc->setFixedSize(300, 300);
+//    doc->setAllowedAreas(Qt::NoDockWidgetArea);
+//    doc->setFloating(true);
+//    QPushButton *btn = new QPushButton(doc);
+//    doc->setWidget(btn);
+//    connect(btn, &QPushButton::clicked, [=](){ doc->move(this->pos().x() + 650, doc->pos().y()); });
+    /*对战时子窗口函数*/
+
+    /*连接服务器Action*/
+    connect(ui->action_connectServer, &QAction::triggered, [=](){
+        bool isOk = false;
+        QPair<QString, QString> info = MyInputDialog::getPair(this, "连接服务器", "请输入服务器地址与用户名：", &isOk);
+        if(!isOk) return;
+        QStringList address = info.first.split(":");
+        QString IP = address.first();
+        unsigned int port = address.last().toUInt();
+        if(this->socket == nullptr || isOnline == false)
+        {
+            if(this->socket != nullptr)
+                delete this->socket;
+            this->socket = new QTcpSocket(this);
+        }
+        socket->connectToHost(IP, port);
+        if(socket->waitForConnected())
+        {
+            this->isOnline = true;
+            connect(socket, &QTcpSocket::readyRead, [=](){
+                Msg msg;
+                receiveFromServer(msg);
+                MsgHandler(msg);
+            });
+            Msg msg(msgType::userName, info.second);
+            sendToServer(msg);
+        }
+    });
+    /*连接服务器Action*/
+
+    /*服务器信息Action*/
+    connect(ui->action_serverInfo, &QAction::triggered, this, &MainWindow::showServerInfo);
+    /*服务器信息Action*/
+
+    /*使用教程Action*/
+    connect(ui->action_instruction, &QAction::triggered, [](){
+        QDesktopServices::openUrl(QUrl("https://github.com/AdamXuD/2048Game/blob/master/README.md"));
+    });
+    /*使用教程Action*/
+
+    /*关于本游戏Action*/
+    connect(ui->action_aboutGame, &QAction::triggered, [=](){
+        QMessageBox::information(this, "关于本游戏", QString("<p> 作者：<a href=\"https://paopaopaoge.xyz/\" target=\"_blank\">AdamXuD</a> </p> <p> 项目名称：<a href=\"https://github.com/AdamXuD/2048Game\" target=\"_blank\">2048Game</a> </p> <p> 版本号： %1 </p>").arg(VERSION));
+    });
+    /*关于本游戏Action*/
+
+    /*匹配对手Action*/
+    connect(ui->action_match, &QAction::triggered, [=](){
+            Msg msg(msgType::matchQuery);
+            sendToServer(msg);
+    });
+    /*匹配对手Action*/
+
+    /*拉取个人成绩列表Action*/
+    connect(ui->action_queryPersonal, &QAction::triggered, [=](){
+            Msg msg(msgType::personalAchievementQuery);
+            sendToServer(msg);
+    });
+    /*拉取个人成绩列表Action*/
+
+    /*拉取所有成绩列表Action*/
+    connect(ui->action_queryAll, &QAction::triggered, [=](){
+            Msg msg(msgType::allAchievementQuery);
+            sendToServer(msg);
+    });
+    /*拉取所有成绩列表Action*/
+
+    /*回退（Undo）操作Action*/
+    connect(ui->btn_undo, &QPushButton::clicked, [=](){
+        g.undo();
+        printMap();
+    });
+    /*回退（Undo）操作Action*/
+
+
+
 }
 
 QColor MainWindow::getItemColor(int num)
@@ -106,8 +201,68 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
     if(g.isOver())
     {
-        if(QMessageBox::Yes == QMessageBox::information(this, "Game Over", QString("Game Over. Your score is %1 !\nWould you want to restart? ").arg(g.data.score), QMessageBox::Yes | QMessageBox::No))
+        if(isOnline)
+            if(QMessageBox::Yes == QMessageBox::information(this, "Upload Your Score", QString("Game Over. Your score is %1 !\nWould you like to upload your score to our server?\n(The score will safely save on cloud and you can reach them any time.)").arg(g.data.score), QMessageBox::Yes | QMessageBox::No))
+            {
+                Msg msg(msgType::uploadScore, QString("%1").arg(g.data.score));
+                sendToServer(msg);
+            }
+
+        if(QMessageBox::Yes == QMessageBox::information(this, "Game Over", QString("Game Over. Your score is %1 !\nWould you like to restart? ").arg(g.data.score), QMessageBox::Yes | QMessageBox::No))
             start();
+    }
+}
+
+void MainWindow::sendToServer(Msg &msg)
+{
+    if(!isOnline)
+    {
+        QMessageBox::warning(this, "请先连接服务器", "服务器未连接，请先连接服务器！");
+        return;
+    }
+
+    QString data = msg.packUp();
+    socket->write(data.toUtf8().data(), data.size());
+#if DEBUGMODE == true
+    qDebug() << "Send A New Msg..." << endl;
+    qDebug() << "type:" << msg.type << endl;
+    qDebug() << "content:" << msg.content.toUtf8().data() << endl;
+#endif
+}
+
+void MainWindow::receiveFromServer(Msg &msg)
+{
+    QString data = socket->readAll();
+    msg.unpack(data.toUtf8().data());
+#if DEBUGMODE == true
+    qDebug() << "Get A New Msg..." << endl;
+    qDebug() << "type:" << msg.type << endl;
+    qDebug() << "content:" << msg.content.toUtf8().data() << endl;
+#endif
+
+}
+
+void MainWindow::MsgHandler(Msg &msg)
+{
+    switch ((int)msg.type)
+    {
+    case msgType::connectSuccess:
+    {
+        this->notice = msg.content;
+        showServerInfo();
+        break;
+    }
+    case msgType::personalAchievement:
+    {
+        AchimentDialog::showAchimentDialog(this, QJsonDocument::fromJson(msg.content.toUtf8()).array().toVariantList());
+        break;
+    }
+    case msgType::allAchievement:
+    {
+        AchimentDialog::showAchimentDialog(this, QJsonDocument::fromJson(msg.content.toUtf8()).array().toVariantList());
+        break;
+    }
+
     }
 }
 
@@ -116,8 +271,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::onUndoBtn()
+void MainWindow::showServerInfo()
 {
-    g.undo();
-    printMap();
+    if(!isOnline)
+        QMessageBox::warning(this, "请先连接服务器", "服务器未连接，请先连接服务器！");
+    else
+        QMessageBox::information(this, "服务器公告", this->notice);
 }

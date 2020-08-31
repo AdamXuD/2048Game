@@ -71,8 +71,8 @@
      <rect>
       <x>492</x>
       <y>457</y>
-      <width>101</width>
-      <height>31</height>
+      <width>93</width>
+      <height>28</height>
      </rect>
     </property>
     <property name="text">
@@ -92,8 +92,64 @@
      <height>26</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>菜单</string>
+    </property>
+    <addaction name="action_connectServer"/>
+    <addaction name="separator"/>
+    <addaction name="action_match"/>
+    <addaction name="action_queryPersonal"/>
+    <addaction name="action_queryAll"/>
+   </widget>
+   <widget class="QMenu" name="menu_about">
+    <property name="title">
+     <string>关于</string>
+    </property>
+    <addaction name="action_aboutGame"/>
+    <addaction name="action_instruction"/>
+    <addaction name="separator"/>
+    <addaction name="action_serverInfo"/>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menu_about"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="action_connectServer">
+   <property name="text">
+    <string>连接服务器</string>
+   </property>
+  </action>
+  <action name="action_match">
+   <property name="text">
+    <string>匹配选手</string>
+   </property>
+  </action>
+  <action name="action_queryPersonal">
+   <property name="text">
+    <string>查询个人成绩</string>
+   </property>
+  </action>
+  <action name="action_queryAll">
+   <property name="text">
+    <string>查看排行榜</string>
+   </property>
+  </action>
+  <action name="action_aboutGame">
+   <property name="text">
+    <string>关于本游戏</string>
+   </property>
+  </action>
+  <action name="action_instruction">
+   <property name="text">
+    <string>使用教程</string>
+   </property>
+  </action>
+  <action name="action_serverInfo">
+   <property name="text">
+    <string>服务器信息</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

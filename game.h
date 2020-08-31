@@ -14,7 +14,7 @@ class Game
         int score;
         unsigned int step = 0;
 
-        GameData() { memset(this, 0, sizeof(GameData)); }
+//        GameData() { memset(this, 0, sizeof(GameData)); }
     };
 
     GameData data;
