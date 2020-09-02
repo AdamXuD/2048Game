@@ -24,6 +24,7 @@ public:
     void setOverHandler(std::function<void()> func); //注册游戏结束函数
     void setUploaded();
     int getMaxNum();
+    bool isOver();
     GameData getGameData();    //游戏数据的getter方法
     GameFlag getGameFlag();
 
@@ -32,7 +33,6 @@ public:
 
 private:
     void randNum(); //在地图上随机一个空位置生成 2 或 4
-    bool isOver();
 
     void compact(int line[]); //向左压缩
     void merge(int line[]); //合并相同项
