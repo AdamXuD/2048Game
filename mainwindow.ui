@@ -69,8 +69,8 @@
    <widget class="QPushButton" name="btn_undo">
     <property name="geometry">
      <rect>
-      <x>492</x>
-      <y>457</y>
+      <x>490</x>
+      <y>460</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -80,6 +80,32 @@
     </property>
     <property name="shortcut">
      <string>Ctrl+Z</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_restart">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>420</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Restart</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_hasUndo">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>500</y>
+      <width>68</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
     </property>
    </widget>
   </widget>
@@ -96,6 +122,8 @@
     <property name="title">
      <string>菜单</string>
     </property>
+    <addaction name="action_queryFromLocal"/>
+    <addaction name="separator"/>
     <addaction name="action_connectServer"/>
     <addaction name="separator"/>
     <addaction name="action_match"/>
@@ -127,7 +155,7 @@
   </action>
   <action name="action_queryPersonal">
    <property name="text">
-    <string>查询个人成绩</string>
+    <string>查询在线成绩</string>
    </property>
   </action>
   <action name="action_queryAll">
@@ -148,6 +176,11 @@
   <action name="action_serverInfo">
    <property name="text">
     <string>服务器信息</string>
+   </property>
+  </action>
+  <action name="action_queryFromLocal">
+   <property name="text">
+    <string>查询本地成绩</string>
    </property>
   </action>
  </widget>

@@ -6,10 +6,88 @@ Game::~Game() { }
 void Game::start()
 {
     memset(&data, 0, sizeof(GameData));
+    memset(&flag, 0, sizeof(GameFlag));
+    while(!history.empty()) history.pop();
     randNum();
     randNum();
     recordMap();
+    printer();
 }
+
+void Game::setPrinter(std::function<void ()> func)
+{
+    this->printer = func;
+}
+
+void Game::setOverHandler(std::function<void ()> func)
+{
+    this->overHandler = func;
+}
+
+void Game::setUploaded()
+{
+    this->flag.hasUploaded = true;
+}
+
+int Game::getMaxNum()
+{
+    int num = 0;
+    for(int row = 0; row < 4; row++)
+        for(int col = 0; col < 4; col++)
+            if(data.map[col][row] > num)
+                num = data.map[col][row];
+    return num;
+}
+
+GameData Game::getGameData()
+{
+    return this->data;
+}
+
+GameFlag Game::getGameFlag()
+{
+    return this->flag;
+}
+
+void Game::moveOperation(Key key)
+{
+    switch(key)
+    {
+    case Key::UP: onUpKey(); break;
+    case Key::DOWN: onDownKey(); break;
+    case Key::LEFT: onLeftKey(); break;
+    case Key::RIGHT: onRightKey(); break;
+    }
+
+    if(isJustMove)
+    {
+        randNum();
+        isJustMove = false;
+        data.step++;
+        recordMap();
+        printer();
+    }
+
+    if(isOver())
+        overHandler();
+}
+
+void Game::undo()
+{
+    if(!flag.hasUndo)
+        flag.hasUndo = true;
+    GameData *tmp = &history.top();
+    if(tmp->step == this->data.step)
+    {
+        if(history.size() != 1)
+            history.pop();
+        tmp = &history.top();
+    }
+
+    memcpy(&this->data, tmp, sizeof(GameData));
+    printer();
+}
+
 
 void Game::randNum() //在地图上随机一个空位置生成 2 或 4
 {
@@ -120,19 +198,4 @@ void Game::recordMap()
     memcpy(&tmp, &this->data, sizeof(GameData));
     history.push(tmp);
 }
-
-void Game::undo()
-{
-    GameData *tmp = &history.top();
-    if(tmp->step == this->data.step)
-    {
-        if(history.size() != 1)
-            history.pop();
-        tmp = &history.top();
-    }
-
-    memcpy(&this->data, tmp, sizeof(GameData));
-}
-
-
 

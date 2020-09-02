@@ -10,11 +10,9 @@ class MyInputDialog;
 class MyInputDialog : public QDialog
 {
     Q_OBJECT
+    Ui::MyInputDialog *ui;
 
 public:
-    explicit MyInputDialog(QWidget *parent = nullptr);
-    ~MyInputDialog();
-
     static QPair<QString, QString> getPair(QWidget *parent, const QString &title, const QString &label, bool *ok = Q_NULLPTR);
 
 signals:
@@ -22,7 +20,9 @@ signals:
     void onBtnCancelClicked();
 
 private:
-    Ui::MyInputDialog *ui;
+    explicit MyInputDialog(QWidget *parent = nullptr);
+    ~MyInputDialog();
+
 };
 
 #endif // MYINPUTDIALOG_H

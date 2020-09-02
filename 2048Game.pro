@@ -1,4 +1,4 @@
-QT       += core gui network
+QT       += core gui network sql
 
 QMAKE_LFLAGS += -static
 
@@ -18,7 +18,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    achimentdialog.cpp \
+    achievementdialog.cpp \
+    database.cpp \
     game.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -26,15 +27,16 @@ SOURCES += \
     network.cpp
 
 HEADERS += \
-    achimentdialog.h \
+    achievementdialog.h \
     common.h \
+    database.h \
     game.h \
     mainwindow.h \
     myinputdialog.h \
     network.h
 
 FORMS += \
-    achimentdialog.ui \
+    achievementdialog.ui \
     mainwindow.ui \
     myinputdialog.ui
 

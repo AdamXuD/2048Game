@@ -5,26 +5,30 @@
 
 class Game
 {
-    friend class MainWindow;
-
     bool isJustMove = false;
-    struct GameData
-    {
-        int map[4][4];
-        int score;
-        unsigned int step = 0;
-
-//        GameData() { memset(this, 0, sizeof(GameData)); }
-    };
 
     GameData data;
+    GameFlag flag;
     std::stack<GameData> history;
+
+    std::function<void()> printer;
+    std::function<void()> overHandler;
 
 public:
     Game(); //清空脏内存
     ~Game();
 
     void start();
+
+    void setPrinter(std::function<void()> func); //注册打印函数
+    void setOverHandler(std::function<void()> func); //注册游戏结束函数
+    void setUploaded();
+    int getMaxNum();
+    GameData getGameData();    //游戏数据的getter方法
+    GameFlag getGameFlag();
+
+    void moveOperation(Key key); //游戏操作的接口
+    void undo(); //撤回的接口
 
 private:
     void randNum(); //在地图上随机一个空位置生成 2 或 4
@@ -40,7 +44,6 @@ private:
     void onLeftKey();
     void onRightKey();
 
-    void undo();
     void recordMap();
 
 };

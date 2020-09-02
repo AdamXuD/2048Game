@@ -5,8 +5,9 @@
 #include "common.h"
 
 #include "myinputdialog.h"
-#include "achimentdialog.h"
+#include "achievementdialog.h"
 #include "network.h"
+#include "database.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,33 +18,28 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     Ui::MainWindow *ui;
     QStack<int *> mapRecorder;
-    Game g;
 
-    QTcpSocket *socket = nullptr;
-    bool isOnline = false;
-    QString notice;
-
+    Game game;
+    Network network;
+    Database db;
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void start();
-    void printMap();
-
     QColor getItemColor(int num);
 
     void keyPressEvent(QKeyEvent * event);
     
-    void sendToServer(Msg &msg);
-    void receiveFromServer(Msg &msg);
-    void MsgHandler(Msg &msg);
-
     void showServerInfo();
 
     void actionInit();
     void windowInit();
-    void test();
+
+    void overHandler();
+    void printer();
+    void offlineWarning();
+    void showAchievement(QVariantList list);
 
 private:
 
