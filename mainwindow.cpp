@@ -20,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent)
     network.setConnectFailed([=](){ QMessageBox::warning(this, "连接失败", "服务器连接失败，可能是目标服务器不在线，也可能是目标服务器地址填写不正确！"); });
 
     game.start();
-
 }
 
 MainWindow::~MainWindow()
@@ -62,6 +61,7 @@ void MainWindow::windowInit()
     connect(&network, &Network::ServerDisconnected, isOnline, [=](){ isOnline->setText("离线"); isOnline->setStyleSheet("color:red;"); });
 
     ui->btn_undo->setFocusPolicy(Qt::NoFocus);
+    ui->btn_restart->setFocusPolicy(Qt::NoFocus);
 }
 
 void MainWindow::actionInit()
@@ -124,7 +124,11 @@ void MainWindow::actionInit()
     /*回退（Undo）操作Btn*/
 
     /*重新开始（Restart）操作Btn*/
-    connect(ui->btn_restart, &QPushButton::clicked, [=](){ game.start(); });
+    connect(ui->btn_restart, &QPushButton::clicked, [=](){ 
+        if(game.isOver())
+            db.insertScore(game.getGameData().score, game.getMaxNum(), game.getGameFlag().hasUndo);            
+        game.start();
+    });
     /*重新开始（Restart）操作Btn*/
 
     /*从本地查询成绩Action*/

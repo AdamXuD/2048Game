@@ -21,10 +21,10 @@ Database::~Database()
 void Database::insertScore(int score, int maxNum, bool hasUndo)
 {
     QSqlQuery query;
-    QString command = QString("INSERT INTO tableScore VALUES (null, %1, %2, %3, null);").arg(score).arg(maxNum).arg(hasUndo);
+    QString command = QString("INSERT INTO tableScore VALUES (null, %1, %2, %3, datetime('now', 'localtime'));").arg(score).arg(maxNum).arg(hasUndo);
 #if DEBUGMODE == true
     if(!query.exec(command))
-        qDebug() << "SQL query ERROR at " << command.toUtf8().data() << " : " << db->lastError().text().toUtf8().data() << endl;
+        qDebug() << "SQL query ERROR at " << command.toUtf8().data() << " : " << db->lastError().text() << endl;
 #endif
 }
 

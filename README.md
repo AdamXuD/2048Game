@@ -1,5 +1,7 @@
 # 2048Game
 
+服务端地址请查看：https://github.com/AdamXuD/2048GameServer
+
 #### 更新日志：
 
 ##### V1.0
